@@ -1,0 +1,52 @@
+/* 편집 영역(문서 본문) 서식 */
+.editor {
+  font-family: '함초롬바탕', 'HCR Batang', 'Batang', 'AppleMyungjo', 'Noto Serif KR', serif;
+  font-size: 10pt;
+  line-height: 1.6;
+  color: #000;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  tab-size: 4em;
+  outline: none;
+  position: relative;
+}
+.editor p, .editor div.hwp-p { margin: 0; min-height: 1em; }
+.editor div { margin: 0; }
+.editor ul, .editor ol { margin: 0; padding-left: 2em; }
+.editor img { max-width: 100%; vertical-align: bottom; }
+.editor a { color: #0645ad; }
+.editor hr { border: none; border-top: 1px solid #000; margin: 4px 0; }
+.editor table.hwp-table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  max-width: 100%;
+  margin: 2px 0;
+  white-space: pre-wrap;
+}
+.editor table.hwp-table td, .editor table.hwp-table th {
+  border: 1px solid transparent;
+  padding: 1px 6px;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+.editor table.hwp-table td p { min-height: 1em; }
+.editor .hwp-textbox {
+  display: inline-block;
+  vertical-align: top;
+  max-width: 100%;
+  border: 1px dotted #9aa;
+  padding: 2px 4px;
+  white-space: pre-wrap;
+}
+.editor hr.page-break {
+  border: none;
+  border-top: 1px dashed #4a7bd0;
+  height: 0;
+  margin-top: 6px;
+  overflow: visible;
+}
+@media print {
+  .editor hr.page-break { break-after: page; border: none; margin: 0 !important; }
+  .editor .hwp-textbox { border-color: transparent; }
+}

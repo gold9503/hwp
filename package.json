@@ -1,0 +1,101 @@
+{
+  "name": "hangul-editor",
+  "productName": "HanEditor",
+  "version": "1.0.0",
+  "description": "HWP/HWPX 문서를 열고 편집하는 한글 워드프로세서 (React + Electron)",
+  "author": "gold9503",
+  "license": "MIT",
+  "private": true,
+  "main": "electron/main.cjs",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "start": "npm run build && electron .",
+    "test": "node --test test/*.test.js",
+    "dist:win": "npm run build && electron-builder --win --x64",
+    "dist:mac": "npm run build && electron-builder --mac --x64 --arm64",
+    "dist:linux": "npm run build && electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.gold9503.haneditor",
+    "productName": "HanEditor",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "fileAssociations": [
+      {
+        "ext": "hwp",
+        "name": "HWP Document",
+        "description": "한글 문서",
+        "role": "Editor"
+      },
+      {
+        "ext": "hwpx",
+        "name": "HWPX Document",
+        "description": "한글 문서 (HWPX)",
+        "role": "Editor"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "identity": null
+    },
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png"
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-portable.exe"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Office"
+    }
+  },
+  "dependencies": {
+    "@xmldom/xmldom": "^0.9.12",
+    "cfb": "^1.2.2",
+    "jszip": "^3.10.2",
+    "pako": "^3.0.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
+    "electron": "^38.8.6",
+    "electron-builder": "^26.18.0",
+    "vite": "^5.4.21"
+  }
+}
