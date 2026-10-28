@@ -1,0 +1,80 @@
+name: Build
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+  package:
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            name: mac
+            args: --mac dir --x64 --arm64
+          - os: windows-latest
+            name: windows
+            args: --win nsis portable zip --x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx electron-builder ${{ matrix.args }} --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      # Apple Silicon 에서도 실행되도록 ad-hoc 서명 후 zip / dmg 생성 (개발자 인증서가 없으므로 공증은 하지 않음)
+      - name: macOS 서명 및 압축
+        if: matrix.name == 'mac'
+        shell: bash
+        run: |
+          VER=$(node -p "require('./package.json').version")
+          for dir in release/mac release/mac-arm64; do
+            [ -d "$dir" ] || continue
+            ARCH=$([ "$dir" = release/mac ] && echo x64 || echo arm64)
+            APP="$dir/HanEditor.app"
+            codesign --force --deep --sign - "$APP"
+            codesign --verify --deep --strict "$APP"
+            ditto -c -k --sequesterRsrc --keepParent "$APP" "release/HanEditor-$VER-mac-$ARCH.zip"
+            hdiutil create -volname HanEditor -srcfolder "$APP" -ov -format UDZO "release/HanEditor-$VER-$ARCH.dmg"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HanEditor-${{ matrix.name }}
+          path: |
+            release/*.exe
+            release/*.zip
+            release/*.dmg
+          if-no-files-found: error
+      - name: 릴리스에 올리기 (v* 태그)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/*.exe
+            release/*.zip
+            release/*.dmg

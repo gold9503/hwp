@@ -619,7 +619,7 @@ export default function App() {
                 if (!!st.italic !== v.italic) exec('italic');
                 if (!!st.underline !== v.underline) exec('underline');
                 if (!!st.strike !== v.strike) exec('strikeThrough');
-                setColor(v.color);
+                if (v.color !== v.initialColor) setColor(v.color);
                 if (Number(v.letterSpacing)) {
                   exec('styleWithCSS', true);
                   const html = `<span style="letter-spacing: ${Number(v.letterSpacing) / 100}em">${escapeHtml(getRange(root).toString())}</span>`;

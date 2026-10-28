@@ -13,8 +13,8 @@
     "build": "vite build",
     "start": "npm run build && electron .",
     "test": "node --test test/*.test.js",
-    "dist:win": "npm run build && electron-builder --win --x64",
-    "dist:mac": "npm run build && electron-builder --mac --x64 --arm64",
+    "dist:win": "npm run build && electron-builder --win portable zip --x64",
+    "dist:mac": "npm run build && electron-builder --mac zip --x64 --arm64",
     "dist:linux": "npm run build && electron-builder --linux"
   },
   "build": {
@@ -55,7 +55,8 @@
         }
       ],
       "icon": "build/icon.png",
-      "identity": null
+      "identity": null,
+      "artifactName": "${productName}-${version}-mac-${arch}.zip"
     },
     "win": {
       "target": [
@@ -72,7 +73,8 @@
           ]
         }
       ],
-      "icon": "build/icon.png"
+      "icon": "build/icon.png",
+      "artifactName": "${productName}-${version}-win-${arch}.${ext}"
     },
     "portable": {
       "artifactName": "${productName}-${version}-portable.exe"
@@ -82,20 +84,27 @@
         "AppImage"
       ],
       "category": "Office"
+    },
+    "nsis": {
+      "artifactName": "${productName}-${version}-setup.exe",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "HanEditor"
+    },
+    "dmg": {
+      "artifactName": "${productName}-${version}-${arch}.dmg"
     }
-  },
-  "dependencies": {
-    "@xmldom/xmldom": "^0.9.12",
-    "cfb": "^1.2.2",
-    "jszip": "^3.10.2",
-    "pako": "^3.0.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.7.0",
+    "@xmldom/xmldom": "^0.9.12",
+    "cfb": "^1.2.2",
     "electron": "^38.8.6",
     "electron-builder": "^26.18.0",
+    "jszip": "^3.10.2",
+    "pako": "^3.0.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "vite": "^5.4.21"
   }
 }

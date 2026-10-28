@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { FONT_SIZES } from './Toolbar.jsx';
+import { cssColorToHex } from '../editor/domToModel.js';
 
 export function Modal({ title, onClose, children, footer, width = 420 }) {
   const ref = useRef(null);
@@ -58,9 +59,10 @@ export function CharShapeDialog({ initial, fonts, onClose, onOk }) {
     italic: !!initial?.italic,
     underline: !!initial?.underline,
     strike: !!initial?.strike,
-    color: '#000000',
+    color: (cssColorToHex(initial?.color) || '#000000').toLowerCase(),
     letterSpacing: 0,
   });
+  const [initialColor] = useState(v.color);
   const set = (k) => (e) => setV({ ...v, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value });
   const previewStyle = {
     fontFamily: `'${v.fontFamily}'`,
@@ -72,7 +74,7 @@ export function CharShapeDialog({ initial, fonts, onClose, onOk }) {
     letterSpacing: `${v.letterSpacing / 100}em`,
   };
   return (
-    <Modal title="글자 모양" width={460} onClose={onClose} footer={<><button className="primary" onClick={() => onOk(v)}>설정</button><button onClick={onClose}>취소</button></>}>
+    <Modal title="글자 모양" width={460} onClose={onClose} footer={<><button className="primary" onClick={() => onOk({ ...v, initialColor })}>설정</button><button onClick={onClose}>취소</button></>}>
       <Row label="글꼴">
         <select value={v.fontFamily} onChange={set('fontFamily')}>
           {[...new Set([v.fontFamily, ...fonts])].map((f) => <option key={f}>{f}</option>)}
@@ -119,7 +121,7 @@ export function ParaShapeDialog({ initial, onClose, onOk }) {
       </Row>
       <Row label="왼쪽 여백(mm)"><input type="number" step="0.5" value={v.marginLeft} onChange={set('marginLeft')} /></Row>
       <Row label="오른쪽 여백(mm)"><input type="number" step="0.5" value={v.marginRight} onChange={set('marginRight')} /></Row>
-      <Row label="첫 줄(mm)"><input type="number" step="0.5" value={v.indent} onChange={set('indent')} /><small> 양수: 들여 쓰기, 음수: 내어 쓰기</small></Row>
+      <Row label="첫 줄(mm)"><input type="number" step="0.5" value={v.indent} onChange={set('indent')} /><small>+ 들여 쓰기<br />− 내어 쓰기</small></Row>
       <Row label="문단 위(mm)"><input type="number" step="0.5" min="0" value={v.spaceBefore} onChange={set('spaceBefore')} /></Row>
       <Row label="문단 아래(mm)"><input type="number" step="0.5" min="0" value={v.spaceAfter} onChange={set('spaceAfter')} /></Row>
       <Row label="줄 간격(%)"><input type="number" min="50" max="500" step="5" value={v.lineHeight} onChange={set('lineHeight')} /></Row>
